@@ -1,0 +1,2 @@
+//about output - better way of notifying parent components that something has changed, via events.
+https://toddmotto.com/component-events-event-emitter-output-angular-2

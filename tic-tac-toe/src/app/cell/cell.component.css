@@ -1,0 +1,14 @@
+.button {
+  width: 100px;
+  height: 100px;
+  vertical-align: middle;
+  font-weight: bold;
+  background-color: #518fb5;
+  border: solid 1px white;
+  color: #55633e;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 60px;
+}
+
