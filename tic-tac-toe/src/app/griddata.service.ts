@@ -6,6 +6,7 @@ export interface ICell {
   cellState: CellState;
   cellRating: number;
   winningCell: boolean;
+  bestCell: boolean;
 }
 
 export type IRow = ICell[];
@@ -31,7 +32,7 @@ export class GridDataService {
   public rows: IRow[] = [];
   private _cells: ICell[] = [];
   public gameState: GameState;
-  private bestCell: ICell;
+  public bestCell: ICell;
   public lines: IRow[] = [];
 
   constructor() {
@@ -50,7 +51,10 @@ export class GridDataService {
       const newRow = [];
       this.rows.push(newRow);
       for (let col = 0; col < this.SIZE; col += 1) {
-        const newCell = {row: row, col: col, cellState: CellState.None, cellRating: 0, winningCell: false};
+        const newCell = {
+          row: row, col: col, cellState: CellState.None, cellRating: 0, winningCell: false, bestCell: false,
+          backCell: false
+        };
         newRow.push(newCell);
         this._cells.push(newCell);
       }
@@ -107,6 +111,11 @@ export class GridDataService {
     }
   }
 
+
+  public showBestCell() {
+    this.bestCell.bestCell = true;
+  }
+
   public computerMove(userX: boolean) {
     this.checkWin();
     this.updateRating(userX);
@@ -135,6 +144,7 @@ export class GridDataService {
     // clear rating
     for (let row = 0; row < this.SIZE; row += 1) {
       for (let col = 0; col < this.SIZE; col += 1) {
+        this.rows[row][col].bestCell = false;
         this.rows[row][col].cellRating = 0;
       }
     }

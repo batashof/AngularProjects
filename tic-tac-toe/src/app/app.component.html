@@ -16,12 +16,15 @@
 <div class="grid-container">
   <div *ngFor="let row of rows; let i = index">
     <app-cell *ngFor="let col of row; let j = index" [col]="col.col" [row]="col.row" [cellState]="col.cellState"
-              [cellRating]="col.cellRating" [winningCell]="col.winningCell" (click)="userMove(col)">
+              [cellRating]="col.cellRating" [winningCell]="col.winningCell" [bestCell]="col.bestCell" [backCell]="backCell" (click)="userMove(col)">
 
     </app-cell>
   </div>
   <button class="start">
     <div (click)="start()"><img src="../assets/eLsS8.png" height="30" width="30"> </div>
+  </button>
+  <button >
+    <div (click)="hint()"><img src="../assets/eLsS8.png" height="50" width="50"> </div>
   </button>
 </div>
 <div class="result" [ngSwitch]="grid.gameState">

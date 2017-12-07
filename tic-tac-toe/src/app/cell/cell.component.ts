@@ -16,13 +16,16 @@ export class CellComponent {
   @Input() public cellState: CellState;
   @Input() public cellRating: number;
   @Input() public winningCell: boolean;
+  @Input() public bestCell: boolean;
 
   public get cellText(): string {
+    // const text = this.cellRating + '';
     if (this.cellState === -1) {
       return 'O';
     }
     if (this.cellState === 1) {
       return 'X';
     }
+    // return text;
   }
 }

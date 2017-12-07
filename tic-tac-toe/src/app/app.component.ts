@@ -22,6 +22,9 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.start();
   }
+  public hint() {
+    this.grid.showBestCell();
+  }
 
   public start() {
     // X turn set
@@ -44,7 +47,7 @@ export class AppComponent implements OnInit {
 
   public userMove(cell: ICell) {
     //    if (cell.cellState != CellState.None) {return;}
-
+    // this.grid.closeBestCell();
     if ((cell.cellState !== CellState.None)
       || (this.grid.gameState === GameState.XWin)
       || (this.grid.gameState === GameState.OWin)) {
@@ -57,6 +60,7 @@ export class AppComponent implements OnInit {
     }
     this.grid.gameState = GameState.ComputerTurn;
     this.grid.computerMove(this.userX);
+
   }
 
 }

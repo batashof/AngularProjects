@@ -1,7 +1,10 @@
 <button class="button" #itemId id={{cellId}}
         [style.color]="cellState === -1 ? '#b8cedb' : ''"
         [style.color]="cellState === 1 ? '#3e657c' : 'grey'"
-        [style.color]="winningCell ? '#935a5a' : ''"
+        [style.background-color]="winningCell ? '#935a5a' : ''"
+        [style.background-color]="bestCell ? '#2a931e' : ''"
         [style.cursor]="cellState === 0 ? 'pointer' : 'not-allowed'">
+
   {{cellText}}
 </button>
+
