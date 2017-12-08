@@ -3,12 +3,14 @@
   height: 100px;
   vertical-align: middle;
   font-weight: bold;
-  background-color: #518fb5;
-  border: solid 1px white;
+  background-color: #4a7b93;
   color: #55633e;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
+  border-style: none;
   font-size: 60px;
 }
 
+.button:focus {
+  border: solid 3px #2c6493;
+}

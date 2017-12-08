@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {ElementRef, Injectable} from '@angular/core';
 
 export interface ICell {
   row: number;
@@ -34,6 +34,7 @@ export class GridDataService {
   public gameState: GameState;
   public bestCell: ICell;
   public lines: IRow[] = [];
+  public gameHistory: string;
 
   constructor() {
   }
@@ -53,12 +54,13 @@ export class GridDataService {
       for (let col = 0; col < this.SIZE; col += 1) {
         const newCell = {
           row: row, col: col, cellState: CellState.None, cellRating: 0, winningCell: false, bestCell: false,
-          backCell: false
+          backCell: false, id: 10 * row + col
         };
         newRow.push(newCell);
         this._cells.push(newCell);
       }
     }
+    this.gameHistory = '';
 
     // define all lines
     // 1 row
@@ -108,30 +110,30 @@ export class GridDataService {
     // rule: bestRating is -1 it means all cells are taken = Draw
     if (bestRating === -1) {
       this.gameState = GameState.Draw;
+      this.finishGame();
     }
   }
-
 
   public showBestCell() {
     this.bestCell.bestCell = true;
   }
 
   public computerMove(userX: boolean) {
-    this.checkWin();
+    this.checkWin(false);
     this.updateRating(userX);
     this.getBestCell();
-    if (this.gameState !== GameState.ComputerTurn) {
-      return;
-    }
+    if (this.gameState !== GameState.ComputerTurn) {return;}
     if (userX) {
       this.bestCell.cellState = CellState.O;
+      this.updateHistory(this.bestCell, 'O');
     } else {
       this.bestCell.cellState = CellState.X;
+      this.updateHistory(this.bestCell, 'X');
     }
     this.gameState = GameState.UserTurn;
     this.updateRating(userX);
     this.getBestCell();
-    this.checkWin();
+    this.checkWin(false);
   }
 
   public updateRating(userX: boolean) {
@@ -191,7 +193,7 @@ export class GridDataService {
     }
   }
 
-  public checkWin() {
+  public checkWin(isReplay: boolean) {
     for (let x = 0; x < this.lines.length; x += 1) {
       const line = this.lines[x];
       if ((line[0].cellState !== CellState.None)
@@ -202,11 +204,31 @@ export class GridDataService {
         line[2].winningCell = true;
         if (line[0].cellState === CellState.X) {
           this.gameState = GameState.XWin;
+          if (!isReplay) {this.finishGame(); }
         }
         if (line[0].cellState === CellState.O) {
           this.gameState = GameState.OWin;
+          if (!isReplay) {this.finishGame(); }
         }
       }
     }
+  }
+
+  public updateHistory(cell: ICell, sign: String) {
+    this.gameHistory += sign + ',' + cell.row.toString() + ',' + cell.col.toString() + ';';
+  }
+
+  public finishGame() {
+    let value: string;
+    let nextIndex: number;
+    for (let x = 9; x > 0; x -= 1) {
+      value = window.localStorage.getItem('Game' + x);
+      if (value != null) {
+        nextIndex = x + 1;
+        window.localStorage.setItem('Game' + nextIndex, value);
+      }
+    }
+    window.localStorage.setItem('Game1', this.gameHistory);
+
   }
 }

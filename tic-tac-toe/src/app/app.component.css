@@ -11,7 +11,8 @@ h2, h3 {
 }
 
 body {
-  margin: 2em;
+  background-color: #336699;
+;
 }
 
 body, input[text], button {
@@ -32,6 +33,14 @@ body, input[text], button {
 .row {
   clear: both;
 }
+.hint {
+  position: absolute;
+  top: 80px;
+  left: 160px;
+  margin: auto;
+  border: none;
+  background-color: white;
+}
 
 .radio {
   display: inline-block;
@@ -50,11 +59,34 @@ body, input[text], button {
 }
 
 .grid-container {
-  margin: auto;
-  width: 100%;
   display: grid;
   grid-gap: 5px;
 
+
+}
+
+.center {
+  margin: auto;
+  width: 300px;
+  max-width: 90%;
+  min-width: 300px;
+  text-align: center;
+
+}
+.container {
+  display: inline-block;
+  text-align: center;
+  background-color: grey;
+
+
+}
+
+.grid-item {
+  display: grid;
+  width: 100px;
+  height: 100px;
+  border: solid 10px yellow;
+  grid-column-gap: 150px;
 }
 
 .result {

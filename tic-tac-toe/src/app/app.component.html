@@ -1,38 +1,56 @@
-<h2>{{title}}</h2>
-<label class="radio">
-  <input type="radio" name="yoursign" value="X"
-         [checked]="userX === true"
-         (change)="updateUserX(true)"
-         [disabled]="grid.gameState != 0">X<br>
 
-</label>
-<label class="radio">
-  <input type="radio" name="yoursign" value="O"
-         (change)="updateUserX(false)"
-         [disabled]="grid.gameState != 0">O<br>
-</label>
+  <h2>{{title}}</h2>
+  <label class="radio">
+    <input type="radio" name="yoursign" value="X"
+           [checked]="userX === true"
+           (change)="updateUserX(true)"
+           [disabled]="grid.gameState != 0">X<br>
+
+  </label>
+  <label class="radio">
+    <input type="radio" name="yoursign" value="O"
+           (change)="updateUserX(false)"
+           [disabled]="grid.gameState != 0">O<br>
+  </label>
 
 
-<div class="grid-container">
-  <div *ngFor="let row of rows; let i = index">
-    <app-cell *ngFor="let col of row; let j = index" [col]="col.col" [row]="col.row" [cellState]="col.cellState"
-              [cellRating]="col.cellRating" [winningCell]="col.winningCell" [bestCell]="col.bestCell" [backCell]="backCell" (click)="userMove(col)">
-
-    </app-cell>
+  <div class="grid-container">
+    <div  *ngFor="let row of grid.rows; let i = index">
+      <app-cell  *ngFor="let col of row; let j = index" [col]="col.col" [row]="col.row"
+                [cellState]="col.cellState"
+                [cellRating]="col.cellRating" [winningCell]="col.winningCell" [bestCell]="col.bestCell"
+                (click)="userMove(col)"
+                id="{{col.id}}"
+                (keydown.enter)="userMove(col)"
+                (keydown.arrowleft)="onLeft(col)" (keydown.arrowRight)="onRight(col)"
+                (keydown.ArrowUp)="alert('Hi')" (keydown.arrowdown)="onDown(col)">
+      </app-cell>
+    </div>
+    <button class="start">
+      <div (click)="start()"><img src="../assets/eLsS8.png" height="30" width="30"></div>
+    </button>
+    <button class="hint">
+      <div (click)="hint()"><img src="../assets/question.png" height="30" width="30"></div>
+    </button>
   </div>
-  <button class="start">
-    <div (click)="start()"><img src="../assets/eLsS8.png" height="30" width="30"> </div>
-  </button>
-  <button >
-    <div (click)="hint()"><img src="../assets/eLsS8.png" height="50" width="50"> </div>
-  </button>
-</div>
-<div class="result" [ngSwitch]="grid.gameState">
-  <label *ngSwitchCase="3">X WIN!</label>
-  <label *ngSwitchCase="4">O WIN!</label>
-  <label *ngSwitchCase="5">DRAW!</label>
 
-</div>
+  <label>Select saved game to play</label>
+
+  <select #selectElem (change)="playGame(selectElem.value)">
+    <option></option>
+    <option *ngFor="let game of getHistoryList()">
+      {{game}}
+    </option>
+  </select>
+
+  <div class="result" [ngSwitch]="grid.gameState">
+    <label *ngSwitchCase="3">X WIN!</label>
+    <label *ngSwitchCase="4">O WIN!</label>
+    <label *ngSwitchCase="5">DRAW!</label>
+
+  </div>
+
+
 
 
 
