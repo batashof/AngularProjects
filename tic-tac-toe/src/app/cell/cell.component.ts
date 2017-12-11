@@ -28,6 +28,9 @@ export class CellComponent {
     }
     // return text;
   }
+  public get cellId(): string {
+    return '' + this.row + this.col;
+  }
 
 
 }

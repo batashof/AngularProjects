@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, AfterViewInit} from '@angular/core';
 import {GridDataService, IRow, ICell, GameState, CellState} from './griddata.service';
 
 @Component({
@@ -8,7 +8,7 @@ import {GridDataService, IRow, ICell, GameState, CellState} from './griddata.ser
   providers: [GridDataService]
 
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements AfterViewInit, OnInit {
   title = 'TIC-TAC-TOE';
   public rows: IRow[] = [];
   public userX: boolean;
@@ -17,14 +17,19 @@ export class AppComponent implements OnInit {
   constructor(private grid: GridDataService) {
     this.grid.gameState = GameState.NotStarted;
   }
-
-  ngOnInit() {
-    this.start();
+  ngAfterViewInit() {
+    document.getElementById('11').focus();
   }
 
   public hint() {
     this.grid.showBestCell();
   }
+  ngOnInit() {
+    this.start();
+  }
+
+
+
 
   public start() {
     // X turn set
@@ -32,6 +37,7 @@ export class AppComponent implements OnInit {
     this.grid.gameState = GameState.NotStarted;
     // reset grid
     this.grid.resetGrid();
+    setTimeout(() => {document.getElementById('11').focus();}, 1000);
   }
 
   public updateUserX(userX: boolean) {
@@ -47,7 +53,7 @@ export class AppComponent implements OnInit {
     if ((this.grid.gameState === GameState.ComputerTurn)
       || (cell.cellState !== CellState.None)
       || (this.grid.gameState === GameState.XWin)
-      || (this.grid.gameState === GameState.OWin)) {return;}
+      || (this.grid.gameState === GameState.OWin)) {return; }
     if (this.userX) {
       cell.cellState = CellState.X;
       this.grid.updateHistory(cell, 'X');
@@ -56,7 +62,7 @@ export class AppComponent implements OnInit {
       this.grid.updateHistory(cell, 'O');
     }
     this.grid.gameState = GameState.ComputerTurn;
-    setTimeout(() => {this.grid.computerMove(this.userX);}, 300);
+    setTimeout(() => {this.grid.computerMove(this.userX); }, 300);
   }
 
   public getHistoryList(): string[] {
@@ -91,6 +97,14 @@ export class AppComponent implements OnInit {
 
   public makeMove(row: string, col: string, cellState: string) {
     this.grid.rows[row][col].cellState = (cellState === 'X') ? CellState.X : CellState.O;
+  }
+
+  public onKeydown(row: number, col: number) {
+    if (row < 0) {row = 0; }
+    if (row > this.grid.SIZE - 1) {row = this.grid.SIZE - 1; }
+    if (col < 0) {col = 0; }
+    if (col > this.grid.SIZE - 1) {col = this.grid.SIZE - 1; }
+    document.getElementById('' + row + col).focus();
   }
 
 }
