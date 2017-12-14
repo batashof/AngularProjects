@@ -28,13 +28,12 @@ export enum GameState {
 
 @Injectable()
 export class GridDataService {
-  public SIZE = 3;
+  public SIZE = 4;
   public rows: IRow[] = [];
-  private _cells: ICell[] = [];
   public gameState: GameState;
   public bestCell: ICell;
   public lines: IRow[] = [];
-  public gameHistory: string;
+  private gameHistory: string;
 
   constructor() {
   }
@@ -43,58 +42,51 @@ export class GridDataService {
     // remove all rows and cells, command pop delete item from list
     while (this.rows.pop()) {
     }
-    while (this._cells.pop()) {
-    }
     while (this.lines.pop()) {
     }
     // create new rows
     for (let row = 0; row < this.SIZE; row += 1) {
       const newRow = [];
-      this.rows.push(newRow);
       for (let col = 0; col < this.SIZE; col += 1) {
         const newCell = {
-          row: row, col: col, cellState: CellState.None, cellRating: 0, winningCell: false, bestCell: false,
-          backCell: false, id: 10 * row + col
+          row: row, col: col, cellState: CellState.None, cellRating: 0, winningCell: false, bestCell: false
         };
         newRow.push(newCell);
-        this._cells.push(newCell);
       }
+      this.rows.push(newRow);
     }
     this.gameHistory = '';
 
     // define all lines
     // 1 row
-    const row1 = this.rows[0];
-    this.lines.push(row1);
-
-    // 2 row
-    const row2 = this.rows[1];
-    this.lines.push(row2);
-    // 3 row
-
-    const row3 = this.rows[2];
-    this.lines.push(row3);
-
-    // 1 column
-    const col1 = [this.rows[0][0], this.rows[1][0], this.rows[2][0]];
-    this.lines.push(col1);
-
-    // 2 column
-    const col2 = [this.rows[0][1], this.rows[1][1], this.rows[2][1]];
-    this.lines.push(col2);
-
-    // 3 column
-    const col3 = [this.rows[0][2], this.rows[1][2], this.rows[2][2]];
-    this.lines.push(col3);
+    for (let i = 0; i < this.SIZE; i++) {
+      const row = [];
+      for (let j = 0; j < this.SIZE; j++) {
+        row.push(this.rows[i][j]);
+      }
+      this.lines.push(row);
+    }
+    for (let i = 0; i < this.SIZE; i++) {
+      const col = [];
+      for (let j = 0; j < this.SIZE; j++) {
+        col.push(this.rows[j][i]);
+      }
+      this.lines.push(col);
+    }
 
     // 1 diagonal
-    const diag1 = [this.rows[0][0], this.rows[1][1], this.rows[2][2]];
+    const diag1 = [];
+    for (let i = 0; i < this.SIZE; i++) {
+      diag1.push(this.rows[i][i]);
+    }
     this.lines.push(diag1);
 
-    // 2 diagonal
-    const diag2 = [this.rows[0][2], this.rows[1][1], this.rows[2][0]];
+// 2 diagonal
+    const diag2 = [];
+    for (let i = 0; i < this.SIZE; i++) {
+      diag2.push(this.rows[i][this.SIZE - i - 1]);
+    }
     this.lines.push(diag2);
-
   }
 
   public getBestCell() {
@@ -122,7 +114,9 @@ export class GridDataService {
     this.checkWin(false);
     this.updateRating(userX);
     this.getBestCell();
-    if (this.gameState !== GameState.ComputerTurn) {return;}
+    if (this.gameState !== GameState.ComputerTurn) {
+      return;
+    }
     if (userX) {
       this.bestCell.cellState = CellState.O;
       this.updateHistory(this.bestCell, 'O');
@@ -162,17 +156,6 @@ export class GridDataService {
         line[2].cellRating += 1;
       }
 
-      // check if cell is winning - set 10
-      if ((line[0].cellState === compSign) && (line[1].cellState === compSign)) {
-        line[2].cellRating = 10;
-      }
-      if ((line[0].cellState === compSign) && (line[2].cellState === compSign)) {
-        line[1].cellRating = 10;
-      }
-      if ((line[1].cellState === compSign) && (line[2].cellState === compSign)) {
-        line[0].cellRating = 10;
-      }
-
       // check if cell can prevent user win - set 9
       if ((line[0].cellState === userSign) && (line[1].cellState === userSign)) {
         line[2].cellRating = 9;
@@ -184,6 +167,16 @@ export class GridDataService {
         line[0].cellRating = 9;
       }
 
+      // check if cell is winning - set 10
+      if ((line[0].cellState === compSign) && (line[1].cellState === compSign)) {
+        line[2].cellRating = 10;
+      }
+      if ((line[0].cellState === compSign) && (line[2].cellState === compSign)) {
+        line[1].cellRating = 10;
+      }
+      if ((line[1].cellState === compSign) && (line[2].cellState === compSign)) {
+        line[0].cellRating = 10;
+      }
       // taken cell has rating -1
       for (let y = 0; y < line.length; y += 1) {
         if (line[y].cellState !== CellState.None) {
@@ -194,21 +187,30 @@ export class GridDataService {
   }
 
   public checkWin(isReplay: boolean) {
-    for (let x = 0; x < this.lines.length; x += 1) {
-      const line = this.lines[x];
+    for (let j = 0; j < this.lines.length; j += 1) {
+      const line = this.lines[j];
+      /*for (let k = 0; k < this.SIZE; k++) {
+        if ((line[0].cellState !== CellState.None)
+          && (line[0].cellState === line[k + 1].cellState)) {}
+      }*/
       if ((line[0].cellState !== CellState.None)
         && (line[0].cellState === line[1].cellState)
-        && (line[0].cellState === line[2].cellState)) {
-        line[0].winningCell = true;
-        line[1].winningCell = true;
-        line[2].winningCell = true;
+        && (line[0].cellState === line[2].cellState)
+        && (line[0].cellState === line[3].cellState)) {
+        for (let i = 0; i < this.SIZE; i++) {
+          line[i].winningCell = true;
+        }
         if (line[0].cellState === CellState.X) {
           this.gameState = GameState.XWin;
-          if (!isReplay) {this.finishGame(); }
+          if (!isReplay) {
+            this.finishGame();
+          }
         }
         if (line[0].cellState === CellState.O) {
           this.gameState = GameState.OWin;
-          if (!isReplay) {this.finishGame(); }
+          if (!isReplay) {
+            this.finishGame();
+          }
         }
       }
     }

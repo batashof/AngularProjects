@@ -27,10 +27,6 @@ export class AppComponent implements AfterViewInit, OnInit {
   ngOnInit() {
     this.start();
   }
-
-
-
-
   public start() {
     // X turn set
     this.userX = true;
@@ -74,12 +70,6 @@ export class AppComponent implements AfterViewInit, OnInit {
     }
     return result;
   }
-
-  public onLeft(cell: ICell) {
-//      let onElement = this.grid.rows[1][1];
-    //  onElement.focus();
-  }
-
   public playGame(game: string) {
     const value = window.localStorage.getItem(game);
     if (value != null) {
@@ -89,7 +79,7 @@ export class AppComponent implements AfterViewInit, OnInit {
       for (let i = 0; i < moves.length - 1; i++) {
         moveArgs = moves[i].split(',');
         // setTimeout(() => {this.makeMove(moveArgs[1], moveArgs[2], moveArgs[0])}, 500);
-         setTimeout(this.makeMove(moveArgs[1], moveArgs[2], moveArgs[0]), 1000);
+         this.makeMove(moveArgs[1], moveArgs[2], moveArgs[0]) ;
       }
       this.grid.checkWin(true);
     }

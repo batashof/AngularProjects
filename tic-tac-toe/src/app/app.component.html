@@ -1,7 +1,7 @@
 <h2>{{title}}</h2>
 <label class="radio">
   <input type="radio" name="yoursign" value="X"
-         [checked]="userX === true"
+         [checked]="userX"
          (change)="updateUserX(true)"
          [disabled]="grid.gameState != 0">X<br>
 
@@ -15,7 +15,9 @@
 
 <div class="grid-container">
   <div *ngFor="let row of grid.rows; let i = index">
-    <app-cell *ngFor="let col of row; let j = index" [col]="col.col" [row]="col.row"
+    <app-cell *ngFor="let col of row; let j = index"
+              [col]="col.col"
+              [row]="col.row"
               [cellState]="col.cellState"
               [cellRating]="col.cellRating" [winningCell]="col.winningCell" [bestCell]="col.bestCell"
               (click)="userMove(col)"
@@ -24,7 +26,6 @@
               (keydown.arrowdown)="onKeydown(col.row + 1, col.col)"
               (keydown.arrowleft)="onKeydown(col.row, col.col - 1)"
               (keydown.arrowright)="onKeydown(col.row, col.col + 1)"
-
     >
     </app-cell>
   </div>
@@ -44,7 +45,6 @@
     {{game}}
   </option>
 </select>
-
 <div class="result" [ngSwitch]="grid.gameState">
   <label *ngSwitchCase="3">X WIN!</label>
   <label *ngSwitchCase="4">O WIN!</label>
