@@ -19,14 +19,14 @@ export class CellComponent {
   @Input() public bestCell: boolean;
 
   public get cellText(): string {
-    // const text = this.cellRating + '';
+     const text = this.cellRating + '';
     if (this.cellState === -1) {
       return 'O';
     }
     if (this.cellState === 1) {
       return 'X';
     }
-    // return text;
+     return text;
   }
   public get cellId(): string {
     return '' + this.row + this.col;

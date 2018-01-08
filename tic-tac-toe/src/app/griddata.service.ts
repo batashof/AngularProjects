@@ -28,7 +28,7 @@ export enum GameState {
 
 @Injectable()
 export class GridDataService {
-  public SIZE = 4;
+  public SIZE = 5;
   public rows: IRow[] = [];
   public gameState: GameState;
   public bestCell: ICell;
@@ -130,6 +130,16 @@ export class GridDataService {
     this.checkWin(false);
   }
 
+  public сompare(arr1, arr2) {
+    let idx = 0;
+    for (let i = 0; i < arr2.length; i++) {
+      idx = arr1.indexOf(arr2[i]);
+      if (idx >= 0) {
+        return arr2[i];
+      }
+    }
+  }
+
   public updateRating(userX: boolean) {
     let userSign = CellState.O;
     let compSign = CellState.X;
@@ -137,6 +147,9 @@ export class GridDataService {
       userSign = CellState.X;
       compSign = CellState.O;
     }
+    let emptyLine = 0;
+
+
     // clear rating
     for (let row = 0; row < this.SIZE; row += 1) {
       for (let col = 0; col < this.SIZE; col += 1) {
@@ -144,20 +157,58 @@ export class GridDataService {
         this.rows[row][col].cellRating = 0;
       }
     }
-    for (let x = 0; x < this.lines.length; x += 1) {
-      const line = this.lines[x];
-
-      // if line is empty or has only comp sign - every cell gets +1 rating
-      if (((line[0].cellState === CellState.None) || (line[0].cellState === compSign))
-        && ((line[1].cellState === CellState.None) || (line[1].cellState === compSign))
-        && ((line[2].cellState === CellState.None) || (line[2].cellState === compSign))) {
-        line[0].cellRating += 1;
-        line[1].cellRating += 1;
-        line[2].cellRating += 1;
+    for (let i = 0; i < this.lines.length; i += 1) {
+      const line = this.lines[i];
+      let OCount = 0;
+      let XCount = 0;
+      const pos = [];
+      for (let j = 0; j < this.SIZE; j += 1) {
+        if (this.lines[i][j].cellState === CellState.None) {
+          pos.push(j);
+        }
+        if (this.lines[i][j].cellState === userSign) {
+          XCount++;
+        }
+        if (this.lines[i][j].cellState === compSign) {
+          OCount++;
+        }
+      }
+      if (OCount === this.SIZE - 1) {
+        this.lines[i][pos[0]].cellRating = this.SIZE * this.SIZE + 1;
+        break;
+      }
+      if (XCount === this.SIZE - 1) {
+        this.lines[i][pos[0]].cellRating = this.SIZE * this.SIZE;
+        break;
+      }
+      if (XCount === 0 && OCount > 0) {
+        for (let j = 0; j < pos.length; j += 1) {
+          this.lines[i][pos[j]].cellRating = OCount + 1;
+        }
+      }
+      if (XCount === 0 && OCount === 0) {
+        for (let j = 0; j < pos.length; j += 1) {
+          this.lines[i][pos[j]].cellRating = OCount;
+        }
+      }
+      if (XCount !== 0) {
+        emptyLine++;
       }
 
+      if (emptyLine === this.SIZE * 2 + 2) {
+        this.lines[i][pos[0]].cellRating = OCount;
+      }
+      // if line is empty or has only comp sign - every cell gets +1 rating
+      /* if (((line[0].cellState === CellState.None) || (line[0].cellState === compSign))
+         && ((line[1].cellState === CellState.None) || (line[1].cellState === compSign))
+       && ((line[2].cellState === CellState.None) || (line[2].cellState === compSign))) {
+         line[0].cellRating += 1;
+         line[1].cellRating += 1;
+         line[2].cellRating += 1;
+       }*/
+
       // check if cell can prevent user win - set 9
-      if ((line[0].cellState === userSign) && (line[1].cellState === userSign)) {
+      /*if ((line[0].cellState === userSign) && (line[1].cellState === userSign)) {
         line[2].cellRating = 9;
       }
       if ((line[0].cellState === userSign) && (line[2].cellState === userSign)) {
@@ -176,7 +227,7 @@ export class GridDataService {
       }
       if ((line[1].cellState === compSign) && (line[2].cellState === compSign)) {
         line[0].cellRating = 10;
-      }
+      }*/
       // taken cell has rating -1
       for (let y = 0; y < line.length; y += 1) {
         if (line[y].cellState !== CellState.None) {
@@ -184,19 +235,21 @@ export class GridDataService {
         }
       }
     }
+
   }
 
   public checkWin(isReplay: boolean) {
     for (let j = 0; j < this.lines.length; j += 1) {
       const line = this.lines[j];
-      /*for (let k = 0; k < this.SIZE; k++) {
-        if ((line[0].cellState !== CellState.None)
-          && (line[0].cellState === line[k + 1].cellState)) {}
-      }*/
-      if ((line[0].cellState !== CellState.None)
-        && (line[0].cellState === line[1].cellState)
-        && (line[0].cellState === line[2].cellState)
-        && (line[0].cellState === line[3].cellState)) {
+      let isLineWinning = true;
+      for (let k = 1; k < this.SIZE; k++) {
+        if ((line[0].cellState === CellState.None)
+          || (line[0].cellState !== line[k].cellState)) {
+          isLineWinning = false;
+          break;
+        }
+      }
+      if (isLineWinning) {
         for (let i = 0; i < this.SIZE; i++) {
           line[i].winningCell = true;
         }
