@@ -1,0 +1,11 @@
+<h2>{{title}}</h2>
+
+<input #x> X <input #y><button (click)="selectOption(x.value, y.value)">Select</button>
+
+<div class="row" *ngFor="let row of cells; let i = index">
+  <app-cell *ngFor="let col of row; let j = index"
+            [state]="col"
+            (click)="makeMove(i, j)"
+  >
+  </app-cell>
+</div>
