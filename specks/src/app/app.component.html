@@ -1,9 +1,7 @@
-<!--The content below is only a placeholder and can be replaced.-->
 <div class="row" *ngFor="let row of [0,1,2,3]">
   <app-cell *ngFor="let col of [0,1,2,3]"
-     [state]="squares[col + row*4 + 1]"
-            (click) = "makeMove(col + row*4 + 1)"
-
+            [state]="squares[col][row]"
+            (click)="makeMove(col, row)"
   >
   </app-cell>
 </div>
